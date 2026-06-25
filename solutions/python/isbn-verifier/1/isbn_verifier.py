@@ -1,0 +1,27 @@
+'''ISBN-10 verification process '''
+import re
+
+def is_valid(isbn):
+    '''The ISBN-10 format is 9 digits (0 to 9) plus one check character (either a digit or             an X only). In the case the check character is an X, this represents the value               '10'. These may be communicated with or without hyphens, and can be checked for               their validity by the following formula:
+(d₁ * 10 + d₂ * 9 + d₃ * 8 + d₄ * 7 + d₅ * 6 + d₆ * 5 + d₇ * 4 + d₈ * 3 + d₉ * 2 + d₁₀ *             1) mod 11 == 0
+    If the result is 0, then it is a valid ISBN-10, otherwise it is invalid.
+    '''
+    total = 0
+    isbn = isbn.replace('-', '')
+    
+    if len(isbn) != 10:
+        return False
+
+    if not all(c.isdigit() for c in isbn[:-1]):
+        return False
+
+    if not (isbn[-1].isdigit() or isbn[-1] == 'X'):
+        return False
+    
+    for pow,num in enumerate(isbn):
+        if num == 'X':
+            num = 10
+        else:
+            num = int(num)
+        total += num * (10 - pow)
+    return total % 11 == 0
